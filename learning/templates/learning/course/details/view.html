@@ -1,0 +1,63 @@
+{% extends 'basepage/base.html' %}
+{% load staticfiles i18n %}
+{% block content %}
+
+<!-- ---------- course_details ------------- -->
+<div data-role="page" id="course_details">
+
+    {% include 'basepage/top_menu.html' %}
+    {% include 'basepage/side_menu.html' %}
+    {% include 'learning/course/details/view_js.html' %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            loadUserData();
+
+            // Add a slight deley before detect any notications and load UI.
+            setTimeout(function(){
+                handle_fly_notifications();
+            }, 500);
+        });
+    </script>
+
+    <!-- CONTENT -->
+    <div data-role="content">
+        <div class="text-center">
+            <div class="bubble tour-bubble" id="tour-bubble" style="display:none;"></div>
+            <h2 class="ui-bar ui-bar-a ui-corner-all">{{ course.title|escape|safe }}</h2>
+            <div class="ui-body ui-body-a ui-corner-all">
+                <p>{{ course.summary|escape|safe }}</p>
+                <div class="videoWrapper">
+                    <iframe id="my-video" src="{{ course.video_url }}" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <p>{{ course.description|escape|safe }}</p>
+                <button id="btnTakeQuiz"
+                 data-icon="info"
+                     class="ui-btn ui-icon-edit ui-btn-icon-left ui-btn-b ui-corner-all ui-shadow"
+                   onclick="window.location='{% url 'quiz' quiz.id %}';">
+                    <span>{% trans "Take Quiz" %}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- end CONTENT -->
+
+    {% include "basepage/notification.html" %}
+    {% include "basepage/footer.html" %}
+
+</div><!-- /page -->
+
+<script>
+$(document).ready(function(){
+{#    $(window).resize(function(){#}
+{#        var win_width = $(window).width() - 40;#}
+{#        $('#my-video').attr('width',win_width + 'px');#}
+{#        $('#my-video').attr('height', win_width*0.53 + 'px');#}
+{#    });#}
+{#    var win_width = $(window).width();#}
+{#    $('#my-video').attr('width',win_width + 'px');#}
+{#    $('#my-video').attr('height', win_width*0.53 + 'px');#}
+
+});
+</script>
+
+{% endblock content %}

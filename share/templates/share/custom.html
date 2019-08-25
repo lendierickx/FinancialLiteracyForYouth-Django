@@ -1,0 +1,100 @@
+{% extends 'basepage/base.html' %}
+{% load staticfiles i18n %}
+{% block content %}
+
+<!-- ---------- resources ------------- -->
+<div data-role="page">
+    <script>
+        $(document).ready(function(){
+            loadUserData();
+                     
+            // Add a slight deley before detect any notications and load UI.
+            setTimeout(function(){
+                handle_fly_notifications();
+            }, 500);
+                          
+            // check if user is on an IOS device and change app links
+            if(navigator.userAgent.match(/iPhone|iPad|iPod/i)){
+                $('#mint-link').attr('href','https://itunes.apple.com/ca/app/mint-money-manager-budget/id300238550?mt=8');
+                $('#goodbudget-link').attr('href','https://itunes.apple.com/ca/app/goodbudget-budget-planner/id471112395?mt=8')
+                $('#mvelopes-link').attr('href','https://itunes.apple.com/ca/app/mvelopes-personal-finance/id417933753?mt=8')
+            }
+        });
+    </script>
+
+    <!-- Content -->
+    <div data-role="content">
+        <div class="text-center">
+            <ul data-inset="true" data-role="listview">
+                <li data-role="list-divider" style="background-color:#2ad;color:#fff;"><h4>Share</h4></li>
+                <li style="margin-bottom:-10px;">
+                    <div class="ui-grid-a">
+                        <div class="badges text-center">
+                            <h2>Congradulations {{ request.user.first_name }} {{ request.user.last_name }}</h2>
+
+                            <h3>{{ share.custom_title }}</h3>
+
+                            {% if share.custom_url %}
+                            <p>{{ share.custom_url }}</p>
+                            {% endif %}
+
+                            <p>{{ share.custom_description }}</p>
+                        </div>
+                    </div>
+
+                </li>
+                <li>
+                    <!-- Social Media Share -->
+                    <div class="g-plusone" data-size="tall" data-annotation="none"></div>
+                </li>
+            </ul>
+
+            <a class="twitter-share-button"
+                href="https://twitter.com/intent/tweet">
+                Tweet</a>
+            
+            <div class="fb-like" data-href="https://www.flyapp.ca/en/share/{{ share.badge.id }}/" data-layout="button" data-action="like" data-show-faces="true" data-share="true"></div>
+            <!-- end Social Media Share -->
+        </div>
+    </div>
+    <!-- /content -->
+
+    {% include "basepage/footer.html" %}
+
+</div><!-- /page -->
+
+<!-- Facebook -->
+<script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=1670933129848966";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
+<!-- end Facebook -->
+<!-- Twitter -->
+<script>
+    window.twttr = (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+        if (d.getElementById(id)) return t;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://platform.twitter.com/widgets.js";
+            fjs.parentNode.insertBefore(js, fjs);
+                    
+            t._e = [];
+            t.ready = function(f) {
+            t._e.push(f);
+        };
+                    
+        return t;
+    }(document, "script", "twitter-wjs"));
+</script>
+<!-- end Twitter -->
+<!-- Google Plus -->
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<g:plusone></g:plusone>
+<!-- end Google Plus -->
+{% endblock content %}

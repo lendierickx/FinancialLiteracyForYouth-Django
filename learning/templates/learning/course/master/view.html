@@ -1,0 +1,95 @@
+{% extends 'basepage/base.html' %}
+{% load staticfiles i18n learning_extras %}
+{% block content %}
+
+<!-- ---------- learning ------------- -->
+<div data-role="page" id="learning">
+
+    {% include 'basepage/top_menu.html' %}
+    {% include 'basepage/side_menu.html' %}
+    {% include 'learning/course/master/view_js.html' %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            loadUserData();
+
+            // Add a slight deley before detect any notications and load UI.
+            setTimeout(function(){
+                handle_fly_notifications();
+            }, 500);
+        });
+    </script>
+
+    <!-- CONTENT -->
+    <div data-role="content">
+        <div class="text-center">
+            <div class="bubble tour-bubble" id="tour-bubble" style="display:none;"></div>
+            {% for course in unlocked_courses.all %}
+            <div class="my-boxes {% if course.type == 1 %} red-box {% elif course.type == 2 %} blue-box {% elif course.type == 3 %} green-box {% endif %} learning-box">
+                <img src="{% static course.image %}" class="course-img" />
+                <h3>{{ course.title|escape|safe }}</h3>
+                <p>{{ course.summary|escape|safe }}</p>
+                {% if course.duration == 5 %}
+                    <small class="short-course">Duration: 5 minutes</small>
+                {% elif course.duration == 30 %}
+                    <small class="moderate-course">Duration: 30 minutes</small>
+                {% elif course.duration == 60 %}
+                    <small class="long-course">Duration: 1 hour</small>
+                {% else %}
+                    <small class="short-course">Duration: Unknown duration!</small>
+                {% endif %}
+                <button class="ui-btn ui-btn-a ui-icon-arrow-r ui-btn-icon-left ui-shadow-icon ui-corner-all begin-course"
+                      onclick="window.location='{% url 'course' course.id %}';">
+                      {% if request.user|has_completed:course %}
+                          {% trans "Finished" %}
+                      {% else %}
+                          {% trans "Start" %}
+                      {% endif %}
+                </button>
+            </div>
+            {% endfor %}
+
+            <h3 class="ui-bar-a" style="max-width:800px;padding:10px;margin:20px auto;font-family:Arial;border-radius:5px;">
+                {% trans "Locked Courses" %}
+            </h3>
+
+            {% for course in locked_courses.all %}
+            <div class="my-boxes {% if course.type == 4 %} d-red-box {% elif course.type == 5 %} s-blue-box {% elif course.type == 6 %} d-yellow-box {% else %} s-blue-box {% endif %} learning-box {% if request.user|has_prerequisites:course == False %}locked{% endif %}">
+                {% if request.user|has_prerequisites:course == False %}
+                    <div class="locked-icon">
+                        <button class="ui-btn-inline">
+                            <i class="fa fa-5x fa-lock"></i>
+                        </button>
+                    </div>
+                {% endif %}
+                <img src="{% static course.image %}" class="course-img locked-img" />
+                <h3>{{ course.title|escape|safe }}</h3>
+                <p>{{ course.summary|escape|safe }}</p>
+                {% if course.duration == 5 %}
+                <small class="short-course">Duration: 5 minutes</small>
+                {% elif course.duration == 30 %}
+                <small class="moderate-course">Duration: 30 minutes</small>
+                {% elif course.duration == 60 %}
+                <small class="long-course">Duration: 1 hour</small>
+                {% else %}
+                <small class="short-course">Duration: Unknown duration!</small>
+                {% endif %}
+                <button class="ui-btn ui-btn-a ui-icon-arrow-r ui-btn-icon-left ui-shadow-icon ui-corner-all begin-course"
+                    {% if request.user|has_prerequisites:course == False %}disabled{% endif %}
+                      onclick="window.location='{% url 'course' course.id %}';">
+                      {% if request.user|has_completed:course %}
+                          {% trans "Finished" %}
+                      {% else %}
+                          {% trans "Start" %}
+                      {% endif %}
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div><!-- end CONTENT -->
+
+    {% include "basepage/notification.html" %}
+    {% include "basepage/footer.html" %}
+
+</div><!-- /page -->
+
+{% endblock content %}

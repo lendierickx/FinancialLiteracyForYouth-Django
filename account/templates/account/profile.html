@@ -1,0 +1,157 @@
+{% extends 'basepage/base.html' %}
+{% load staticfiles i18n account_extras %}
+{% block content %}
+
+<!-- ---------- profile ------------- -->
+<div data-role="page" id="profile">
+
+    {% include 'basepage/top_menu.html' %}
+    {% include 'basepage/side_menu.html' %}
+    {% include 'account/profile_js.html' %}
+
+    <!-- Content -->
+    <div data-role="content">
+        <div class="text-center">
+            <div class="bubble tour-bubble" id="tour-bubble" style="display:none;"></div>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="list-divider" style="background-color:#E66771;color:#fff;">
+                    <h4>{% trans "User Info" %}</h4>
+                </li>
+                <li>
+                    <span>{% trans "Name" %}</span>
+                    <span class="fright text-right">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Date Joined" %}</span>
+                    <span class="fright text-right">{{ request.user.date_joined }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Level" %} ({{ request.me.xplevel.num }})</span>
+                    <span class="fright text-right" style="color:goldenrod;">{{ request.me.xplevel.title|escape|safe }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Experience" %}</span>
+                    <span class="fright text-right" style="color:green;">{{ request.me.xp }}/{{ request.me.xplevel.max_xp }} xp</span>
+                </li>
+            <!--
+                <li>
+                    <span>Linked By</span>
+                    <span class="fright text-right"><i class="fa fa-facebook-square fa-fw"></i> Facebook</span>
+                </li>
+            -->
+            </ul>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="list-divider" style="background-color:#779ECB;color:#fff;">
+                    <h4>{% trans "Current Goals" %}</h4>
+                </li>
+                <li>
+                    <span>{% trans "Saving" %}</span>
+                    <p>{% show_goal_text savings_goal constants.SAVINGS_MYGOAL_TYPE %}</p>
+                </li>
+                <li>
+                    <span>{% trans "Credit" %}</span>
+                    <p>{% show_goal_text credit_goal constants.CREDIT_MYGOAL_TYPE %}</p>
+                </li>
+                <li>
+                    <span>{% trans "Goal" %}</span>
+                    <p>{% show_goal_text final_goal constants.GOAL_MYGOAL_TYPE %}</p>
+                </li>
+            </ul>
+
+            <ul data-role="listview" data-inset="true" style="border-bottom-right-radius:0px;border-bottom-left-radius: 0px;">
+                <li data-role="list-divider" style="background-color:#92C472;color:#fff;">
+                    <h4>{% trans "Goal History" %}</h4>
+                </li>
+                <li style="padding: 0;margin: 0;">
+                    <div data-role="collapsibleset" data-corners="true" style="margin: 0px;">
+                        <div data-role="collapsible" data-corners="false">
+                            <h4>Last Month</h4>
+                            <ul data-role="listview" data-corners="false" data-inset="true" style="margin: 0px;">
+                                <li data-icon="false" class="goal-notset"><a><span>{% trans "Savings Goal" %}</span></a></li>
+                                <li data-icon="false" class="goal-notset"><a><span>{% trans "Credit Goal" %}</span></a></li>
+                                <li data-icon="false" class="goal-notset"><a><span>{% trans "Long-term Goal" %}</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <ul data-role="listview" data-inset="true" id="courses">
+                <li data-role="list-divider" style="background-color:#E74C3C;color:#fff;">
+                    <h4>{% trans "Courses Completed" %}</h4>
+                </li>
+                {% for enrollment in enrollments.all %}
+                    <li>
+                        <a onclick="window.location='{% url 'course' enrollment.course.id %}';">
+                            <span>{{ enrollment.course.title|escape|safe }}</span>
+                            {% if enrollment.final_mark >= 75 %}
+                                <span class="fright" style="color:green;">{{ enrollment.final_mark }}%</span>
+                            {% elif enrollment.final_mark >= 50 and enrollment.final_mark < 75 %}
+                                <span class="fright" style="color:yellow;">{{ enrollment.final_mark }}%</span>
+                            {% else %}
+                                <span class="fright" style="color:red;">{{ enrollment.final_mark }}%</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% empty %}
+                    <li>
+                        {% trans "Not enrolled in any courses." %}
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <ul data-role="listview" data-inset="true" id="badges">
+                <li data-role="list-divider" style="background-color:darkturquoise;color:#fff;">
+                    <h4>{% trans "FLY Badges" %}</h4>
+                </li>
+                <li>
+                    <a onclick="window.location='{% url 'badges' %}#badges';">{% trans "View Badges" %}</a>
+                </li>
+            </ul>
+            {% comment %}
+            <ul data-role="listview" data-inset="true">
+                <li data-role="list-divider" style="background-color:goldenrod;color:#fff;">
+                    <h4>{% trans "Newsletter Signup" %}</h4>
+                </li>
+                <li>
+                    <span style="position:relative;top:10px;font-size:10pt;">{% trans "Receive Newsletter" %}</span><span class="text-right fright">
+                        <form>
+                            <select id="newsletter-switch" data-role="slider" data-mini="true">
+                                <option {% if request.me.wants_newsletter == False %}selected="true"{% endif %}>{% trans "Off" %}</option>
+                                <option {% if request.me.wants_newsletter == True %}selected="true"{% endif %}>{% trans "On" %}</option>
+                            </select>
+                        </form>
+                    </span>
+                    <button id="btnSaveChanges" style="display:none;" class="ui-btn ui-icon-edit ui-btn-icon-left ui-btn-a ui-corner-all ui-shadow" style="margin-top:30px;">
+                        <span>{% trans "Save Changes" %}</span>
+                    </button>
+                </li>
+            </ul>
+            {% endcomment %}
+            <button data-icon="warning" id="btnDeleteAccount" class="ui-btn ui-icon-edit ui-btn-icon-left ui-btn-a ui-corner-all ui-shadow">
+                <span>{% trans "Remove Account" %}</span>
+            </button>
+        </div>
+    </div>
+    <!-- /.content -->
+
+    <!-- Footer -->
+    {% include "basepage/notification.html" %}
+    {% include "basepage/footer.html" %}
+    <!-- /.Footer -->
+
+    <!-- Delete Confirmation -->
+    <div data-role="popup" id="confirm-popup" data-theme="a" class="ui-corner-all" data-transition="pop">
+        <div class="text-center">
+            <h3>{% trans "Delete your account?" %}</h3>
+            <p>{% trans "If you delete your account you will lose all account information and achievements.  Type 'delete' below to confirm deleting your account." %}</p>
+            <div class="alert alert-danger alert-confirm" style="display:none;">{% trans "Please type 'delete' below to delete your account." %}</div>
+            <input type="text" id="txtDeleteConfirm" />
+            <button data-role="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b" onclick="deleteAccount();">{% trans "Delete Account" %}</button>
+            <button data-role="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b" onclick="$('#confirm-popup').popup('close');">{% trans "Cancel" %}</button>
+        </div>
+    </div>
+    <!-- /.Delete Confirmation -->
+
+</div><!-- /.page -->
+{% endblock content %}

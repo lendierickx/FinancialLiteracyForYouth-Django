@@ -1,0 +1,43 @@
+{% extends 'basepage/base.html' %}
+{% load staticfiles i18n %}
+{% block content %}
+
+<!-- ---------- login ------------- -->
+<div data-role="page" id="login-page">
+    <!-- ---------- login content ------------- -->
+    <div data-role="content" align="center" data-theme="a" style="">
+        <div class="row">                            <!-- row -->
+            <div class="container" id="inner-login-container">
+                {% include "authentication/register_js.html" %}
+
+                <img src="{% static 'img/oin-fly-logo.png' %}" id="login-logo" alt="bizmula-logo" style="" />
+
+                <form style="width:280px;margin:auto;">
+                    <input type="text" placeholder="{% trans 'Email Address' %}" name="email" id="id_email" />
+                    <input type="text" placeholder="{% trans 'First Name' %}" name="fname" id="id_first_name" />
+                    <input type="text" placeholder="{% trans 'Last Name' %}" name="lname" id="id_last_name" />
+                    <input type="password" placeholder="{% trans 'Password' %}" name="pass1" id="id_password" />
+                    <input type="password" placeholder="{% trans 'Confirm Password' %}" name="pass2" id="id_password2" />
+                    <input id="id_register_btn" onclick="ajax_register();" type="button" value="{% trans 'Register' %}" class="ui-btn ui-corner-all" />
+                </form>
+                <div class="clearfix"></div>
+                <a id="id_login_btn" href="{% url 'login' %}" class="ui-btn ui-corner-all" style="background-color:#666;padding-top:25px;"><span>{% trans 'Login' %}</span></a>
+            </div><!-- container -->
+        </div>
+    </div>
+
+    <!-- Error Message Modal -->
+    <div data-role="popup" id="login-popup" data-theme="a" class="ui-corner-all" data-transition="pop">
+        <div>
+            <h3>{% trans 'Login: Error' %}</h3>
+            <p>
+                <div id="id_error"></div>
+            </p>
+            <button id="id_ok_btn" data-role="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b" onclick="$('#login-popup').popup('close');">{% trans 'Close' %}</button>
+        </div>
+    </div>
+    <!-- end Error Message Modal -->
+
+    {% include "basepage/footer.html" %}
+</div>
+{% endblock content %}
