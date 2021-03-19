@@ -10,7 +10,7 @@ django-htmlmin==0.10.0
 django-mailgun==0.9.1
 django-modeltranslation==0.12
 django-storages==1.5.1
-djangorestframework==3.4.7
+djangorestframework==3.11.2
 gunicorn==19.6.0
 html5lib==0.999999999
 Markdown==2.6.7
