@@ -15,7 +15,7 @@ gunicorn==19.6.0
 html5lib==0.999999999
 Markdown==2.6.7
 oauthlib==2.0.0
-Pillow==3.4.1
+Pillow==8.2.0
 psycopg2==2.6.2
 PyJWT==1.4.2
 python-social-auth==0.2.21
